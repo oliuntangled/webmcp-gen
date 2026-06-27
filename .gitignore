@@ -1,0 +1,8 @@
+node_modules/
+dist/
+webmcp-out/
+__test_fixtures__/
+__test_gen_fixtures__/
+__test_tpl_fixtures__/
+*.tsbuildinfo
+.DS_Store
