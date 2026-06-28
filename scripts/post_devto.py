@@ -95,6 +95,14 @@ article = {
             "webmcp-gen --api crud-api.ts\n"
             "```\n\n"
             "MIT licensed. Contributions welcome.\n\n"
+            "## v1.2.0 — security-hardened release\n\n"
+            "The current npm version (v1.2.0) has been through a 4-agent security audit "
+            "covering line-by-line diff scanning, cross-file tracing, removed-behavior "
+            "analysis, and dedicated security review. 10 findings were fixed before public "
+            "announcement, including injection hardening in generated code, path traversal "
+            "protection, and Chrome 150 compatibility (the origin trial API moved from "
+            "`navigator.modelContext` to `document.modelContext`). Full changelog in the "
+            "[README](https://github.com/oliuntangled/webmcp-gen#changelog).\n\n"
             "**GitHub:** [oliuntangled/webmcp-gen](https://github.com/oliuntangled/webmcp-gen)\n"
             "**npm:** [webmcp-gen](https://www.npmjs.com/package/webmcp-gen)\n\n"
             "---\n\n"
@@ -102,6 +110,18 @@ article = {
         ),
     }
 }
+
+def find_existing_article():
+    resp = requests.get(f"{BASE}/articles/me/all", headers=HEADERS)
+    resp.raise_for_status()
+    for a in resp.json():
+        if "webmcp" in a.get("title", "").lower():
+            return a["id"]
+    return None
+
+
+BASE = "https://dev.to/api"
+HEADERS = {"api-key": api_key}
 
 if __name__ == "__main__":
     if "--dry-run" in sys.argv:
@@ -117,16 +137,27 @@ if __name__ == "__main__":
     if "--publish" in sys.argv:
         article["article"]["published"] = True
 
-    response = requests.post(
-        "https://dev.to/api/articles",
-        headers={"api-key": api_key, "Content-Type": "application/json"},
-        data=json.dumps(article),
-    )
+    existing_id = find_existing_article()
 
-    if response.status_code == 201:
+    if existing_id:
+        response = requests.put(
+            f"{BASE}/articles/{existing_id}",
+            headers={**HEADERS, "Content-Type": "application/json"},
+            data=json.dumps(article),
+        )
+        action = "Updated"
+    else:
+        response = requests.post(
+            f"{BASE}/articles",
+            headers={**HEADERS, "Content-Type": "application/json"},
+            data=json.dumps(article),
+        )
+        action = "Created"
+
+    if response.status_code in (200, 201):
         data = response.json()
         status = "PUBLISHED" if article["article"]["published"] else "DRAFT"
-        print(f"Article created ({status}): {data['url']}")
+        print(f"Article {action.lower()} ({status}): {data['url']}")
     else:
         print(f"ERROR {response.status_code}: {response.text}")
         sys.exit(1)

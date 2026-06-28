@@ -221,10 +221,37 @@ const validation = validateToolDefinition({
 
 The primary package name is `webmcp-gen`. The fallback name `untangled-webmcp` is reserved on npm as an alternative if needed.
 
+## Changelog
+
+### v1.2.0 — Security hardening
+
+This release hardens code generation against injection and path traversal vectors found during an internal security audit. No exploitation in the wild is known. All users of v1.0.0–v1.1.1 should upgrade.
+
+- Fixed: JSDoc comment injection via `*/` in descriptions
+- Fixed: Unescaped newlines/CR in generated string literals
+- Fixed: Tool names used as filenames without sanitisation (path traversal)
+- Fixed: Files written before validation passed
+- Added: `untrustedContentHint` annotation support (`@untrusted` JSDoc tag)
+- Fixed: Boolean union types now get correct schema type
+- Fixed: Null deref guard on properties with no declarations
+
+### v1.1.0 — Chrome 150 compatibility
+
+- Fixed: `navigator.modelContext` deprecated in Chrome 150; generated stubs now use a compat shim across Chrome 149–156+
+- Added: `@untrusted` JSDoc tag for `untrustedContentHint` annotation
+- Added: `Promise<string>` return type on execute callbacks
+
+### v1.0.0 — Initial release
+
+- TypeScript interface → WebMCP tool definition codegen
+- 4 starter templates (CRUD, search, form handler, data transformer)
+- JSON Schema validation against the WebMCP spec
+- Security best practices in generated handler stubs
+
 ## Development
 
 ```bash
-git clone <repo-url>
+git clone https://github.com/oliuntangled/webmcp-gen.git
 cd webmcp-gen
 npm install
 npm run build
