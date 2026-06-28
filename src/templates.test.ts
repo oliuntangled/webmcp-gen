@@ -53,7 +53,7 @@ describe("templates", () => {
         expect(tool.definition.name).toBeTruthy();
         expect(tool.definition.description).toBeTruthy();
         expect(tool.definition.inputSchema.type).toBe("object");
-        expect(tool.handlerStub).toContain("navigator.modelContext.registerTool");
+        expect(tool.handlerStub).toContain("ctx.registerTool(");
       }
     });
   }

@@ -1,6 +1,6 @@
 {
   "name": "webmcp-gen",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "CLI tool that generates WebMCP tool definitions from TypeScript interfaces. Built with AI assistance.",
   "type": "module",
   "main": "dist/index.js",

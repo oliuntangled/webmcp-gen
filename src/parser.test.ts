@@ -212,7 +212,7 @@ describe("parseTypeScriptFile", () => {
     const result = parseTypeScriptFile(path);
 
     const stub = result.tools[0].handlerStub;
-    expect(stub).toContain('navigator.modelContext.registerTool');
+    expect(stub).toContain('ctx.registerTool(');
     expect(stub).toContain('"addTodo"');
     expect(stub).toContain("AddTodoInput");
     expect(stub).toContain("text: string");

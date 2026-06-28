@@ -13,6 +13,12 @@ except ImportError:
     subprocess.check_call([sys.executable, "-m", "pip", "install", "requests"])
     import requests
 
+try:
+    import truststore
+    truststore.inject_into_ssl()
+except ImportError:
+    pass
+
 from dotenv import load_dotenv
 
 env_path = Path(__file__).resolve().parents[4] / ".env"
@@ -29,13 +35,25 @@ article = {
         "published": False,
         "tags": ["webmcp", "chrome", "typescript", "ai"],
         "body_markdown": (
-            "Chrome 149 just shipped WebMCP — a browser-native API that lets web pages "
-            "expose structured tools to AI agents via `navigator.modelContext`. It's in "
-            "origin trial now, and if you're building for it, you'll notice there's no "
-            "codegen tooling yet.\n\n"
+            "Chrome 149 shipped WebMCP — a browser-native API that lets web pages "
+            "expose structured tools to AI agents via `navigator.modelContext`. The "
+            "ecosystem is forming fast: [webmcp-core](https://github.com/keak-ai/webmcp-core) "
+            "crawls live sites to auto-generate tool definitions, and "
+            "[@webmcp-registry/kit](https://github.com/WebMCP-Registry/kit) provides a "
+            "runtime SDK with Zod-based `defineTool()`.\n\n"
+            "What's missing is **build-time codegen from your existing TypeScript**. "
+            "If you already have typed interfaces for your API, you shouldn't have to "
+            "rewrite them as Zod schemas or wait for a crawler to discover them.\n\n"
             "**webmcp-gen** fills that gap. Write your API as TypeScript interfaces, run "
             "one command, get spec-compliant WebMCP tool definitions + handler stubs with "
             "security best practices baked in.\n\n"
+            "## Where it fits\n\n"
+            "| Tool | Approach | When to use |\n"
+            "|---|---|---|\n"
+            "| **webmcp-core** | Crawl a live URL | You have a site, want tools auto-discovered |\n"
+            "| **@webmcp-registry/kit** | Zod schemas at runtime | You want runtime registration + React hooks |\n"
+            "| **webmcp-gen** | TypeScript interfaces at build time | You have typed TS, want static JSON + stubs |\n\n"
+            "They're complementary — different layers for different workflows.\n\n"
             "## Quick example\n\n"
             "```typescript\n"
             "// api.ts\n\n"
@@ -60,6 +78,12 @@ article = {
             "  - `requestUserInteraction()` reminders for mutating tools\n"
             "  - Input sanitisation warnings for freeform string inputs\n"
             "  - `readOnlyHint` annotations for query-only tools\n\n"
+            "## Security by default\n\n"
+            "WebMCP allows AI agents to execute tools that affect live web applications. "
+            "Google advises using human-in-the-loop hooks and protecting against indirect "
+            "prompt injection. webmcp-gen bakes this into every generated handler stub — "
+            "mutating tools get `requestUserInteraction()` reminders, freeform inputs get "
+            "sanitisation warnings. Safe defaults, not afterthoughts.\n\n"
             "## Install\n\n"
             "```bash\n"
             "npm install -g webmcp-gen\n"

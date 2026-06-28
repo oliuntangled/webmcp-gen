@@ -61,7 +61,7 @@ describe("generate", () => {
     const handlerPath = join(OUT_DIR, "searchProducts.handler.ts");
     expect(existsSync(handlerPath)).toBe(true);
     const handlerContent = readFileSync(handlerPath, "utf-8");
-    expect(handlerContent).toContain("navigator.modelContext.registerTool");
+    expect(handlerContent).toContain("ctx.registerTool(");
   });
 
   it("should generate combined output when combined=true", () => {

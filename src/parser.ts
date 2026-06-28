@@ -112,10 +112,16 @@ function processInterface(
     inputSchema,
   };
 
-  // Detect read-only hint from JSDoc tags
   const jsDocTags = getJsDocTags(iface);
+  const annotations: Record<string, boolean> = {};
   if (jsDocTags.includes("readonly") || jsDocTags.includes("readOnly")) {
-    definition.annotations = { readOnlyHint: true };
+    annotations.readOnlyHint = true;
+  }
+  if (jsDocTags.includes("untrusted") || jsDocTags.includes("untrustedContent")) {
+    annotations.untrustedContentHint = true;
+  }
+  if (Object.keys(annotations).length > 0) {
+    definition.annotations = annotations;
   }
 
   const handlerStub = generateHandlerStub(definition, name);
@@ -363,11 +369,14 @@ interface ${inputType} {
 ${params}
 }
 ${readOnlyComment}
-navigator.modelContext.registerTool({
+// Chrome 149: navigator.modelContext — Chrome 150+: document.modelContext
+const ctx = "modelContext" in document ? document.modelContext : navigator.modelContext;
+
+ctx.registerTool({
   name: "${def.name}",
   description: "${escapeString(def.description)}",
   inputSchema: ${JSON.stringify(def.inputSchema, null, 4).replace(/\n/g, "\n  ")},${def.annotations ? `\n  annotations: ${JSON.stringify(def.annotations)},` : ""}
-  execute: async (input: ${inputType}) => {
+  execute: async (input: ${inputType}): Promise<string> => {
 ${securityBlock}    // TODO: Implement ${def.name} logic here
     throw new Error("Not implemented: ${def.name}");
   },

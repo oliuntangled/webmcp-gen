@@ -38,12 +38,11 @@ client = tweepy.Client(
 
 tweets = [
     (
-        "Chrome 149 just shipped WebMCP — pages can now expose structured tools "
-        "to AI agents natively.\n\n"
-        "But there's no codegen tooling yet.\n\n"
-        "So I built webmcp-gen: TypeScript interfaces in → spec-compliant "
-        "WebMCP definitions out.\n\n"
-        "One command. Open source.\n\n"
+        "The WebMCP ecosystem has crawlers (site to tools) and runtime SDKs "
+        "(Zod at runtime).\n\n"
+        "What's missing: build-time codegen from your existing TypeScript.\n\n"
+        "webmcp-gen: TS interfaces in, spec-compliant WebMCP tool definitions "
+        "out. One command.\n\n"
         "npm install -g webmcp-gen"
     ),
     (
@@ -51,26 +50,28 @@ tweets = [
         "1. Write your API as TS interfaces\n"
         "2. Run: npx webmcp-gen --api myapp.ts\n"
         "3. Get JSON tool definitions + handler stubs\n\n"
-        "It maps types to JSON Schema, pulls JSDoc to descriptions, "
-        "and validates against the spec automatically."
+        "Build-time, type-safe, zero runtime deps. "
+        "Complements @kaborstudio's webmcp-core and @webmcp-registry/kit "
+        "- different layer."
     ),
     (
-        "Security matters here — WebMCP lets agents execute tools on live web apps.\n\n"
+        "WebMCP lets agents execute tools on live web apps. Security matters.\n\n"
         "webmcp-gen bakes in Google's own guidance:\n"
         "- requestUserInteraction() for mutating actions\n"
-        "- Input sanitisation for prompt injection\n"
-        "- readOnlyHint annotations for safe queries"
+        "- Sanitisation for prompt injection\n"
+        "- readOnlyHint annotations for safe queries\n\n"
+        "Safe defaults, not afterthoughts."
     ),
     (
-        "Includes 4 starter templates:\n"
-        "• CRUD API\n"
-        "• Search/filter\n"
-        "• Form handler\n"
-        "• Data transformer\n\n"
-        "Run: webmcp-gen --template crud-api\n"
-        "Then: webmcp-gen --api crud-api.ts\n\n"
-        "Full docs + source: github.com/oliuntangled/webmcp-gen\n\n"
-        "MIT licensed. PRs welcome."
+        "4 starter templates to get going:\n"
+        "- CRUD API\n"
+        "- Search/filter\n"
+        "- Form handler\n"
+        "- Data transformer\n\n"
+        "webmcp-gen --template crud-api\n"
+        "webmcp-gen --api crud-api.ts\n\n"
+        "MIT licensed. PRs welcome.\n"
+        "github.com/oliuntangled/webmcp-gen"
     ),
 ]
 

@@ -35,10 +35,12 @@ export interface JsonSchemaObject {
 export interface ToolAnnotations {
   /** When true, indicates the tool only reads data and has no side effects. */
   readOnlyHint?: boolean;
+  /** When true, indicates the tool handles untrusted/user-generated content. */
+  untrustedContentHint?: boolean;
 }
 
 /**
- * A complete WebMCP tool definition ready for navigator.modelContext.registerTool().
+ * A complete WebMCP tool definition ready for document.modelContext.registerTool().
  * The `execute` callback is emitted as a stub in the generated handler file.
  */
 export interface WebMCPToolDefinition {

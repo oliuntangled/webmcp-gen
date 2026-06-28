@@ -148,17 +148,22 @@ Available templates:
 ### Handler stub (`*.handler.ts`)
 
 ```typescript
-navigator.modelContext.registerTool({
+// Chrome 149: navigator.modelContext — Chrome 150+: document.modelContext
+const ctx = "modelContext" in document ? document.modelContext : navigator.modelContext;
+
+ctx.registerTool({
   name: "searchProducts",
   description: "Search products by keyword.",
   inputSchema: { /* ... */ },
   annotations: { readOnlyHint: true },
-  execute: async (input: SearchProductsInput) => {
+  execute: async (input: SearchProductsInput): Promise<string> => {
     // TODO: Implement searchProducts logic here
     throw new Error("Not implemented: searchProducts");
   },
 });
 ```
+
+> **Note:** `navigator.modelContext` is deprecated in Chrome 150. Generated stubs include a compatibility shim that works across Chrome 149–156+.
 
 ## TypeScript mapping reference
 
@@ -173,6 +178,7 @@ navigator.modelContext.registerTool({
 | `prop?: type` | Excluded from `required` array |
 | `/** JSDoc */` | `"description"` field |
 | `@readonly` tag | `annotations.readOnlyHint = true` |
+| `@untrusted` tag | `annotations.untrustedContentHint = true` |
 
 ## Security
 
