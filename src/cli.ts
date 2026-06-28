@@ -22,7 +22,7 @@ import { resolve, join } from "node:path";
 import { generate } from "./generator.js";
 import { getTemplate, TEMPLATES } from "./templates.js";
 
-const VERSION = "1.1.1";
+const VERSION = "1.2.0";
 
 const program = new Command();
 

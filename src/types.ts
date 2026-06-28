@@ -84,3 +84,8 @@ export interface ValidationResult {
   valid: boolean;
   issues: ValidationIssue[];
 }
+
+// Shared constant for the modelContext compat shim — used by parser and generator
+export const CTX_COMMENT = "// Chrome 149: navigator.modelContext — Chrome 150+: document.modelContext";
+export const CTX_DECLARATION = 'const ctx = "modelContext" in document ? document.modelContext : navigator.modelContext;';
+export const CTX_BLOCK = CTX_COMMENT + "\n" + CTX_DECLARATION;

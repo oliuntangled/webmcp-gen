@@ -6,14 +6,15 @@
  */
 
 import { writeFileSync, mkdirSync, existsSync } from "node:fs";
-import { join, basename } from "node:path";
+import { join, basename, resolve, relative } from "node:path";
 
 import { parseTypeScriptFile } from "./parser.js";
 import { validateToolSet } from "./validator.js";
-import type {
-  GenerationResult,
-  GeneratedTool,
-  ValidationResult,
+import {
+  CTX_BLOCK,
+  type GenerationResult,
+  type GeneratedTool,
+  type ValidationResult,
 } from "./types.js";
 
 export interface GenerateOptions {
@@ -56,7 +57,7 @@ export function generate(options: GenerateOptions): GenerateOutput {
   // Step 3: Write files
   const writtenFiles: string[] = [];
 
-  if (!validateOnly && generation.tools.length > 0) {
+  if (!validateOnly && generation.tools.length > 0 && validation.valid) {
     if (!existsSync(outDir)) {
       mkdirSync(outDir, { recursive: true });
     }
@@ -70,12 +71,10 @@ export function generate(options: GenerateOptions): GenerateOutput {
       writeFileSync(defPath, JSON.stringify(allDefinitions, null, 2), "utf-8");
       writtenFiles.push(defPath);
 
-      const ctxLine = '// Chrome 149: navigator.modelContext — Chrome 150+: document.modelContext\n'
-        + 'const ctx = "modelContext" in document ? document.modelContext : navigator.modelContext;\n';
       const stubs = generation.tools
-        .map((t) => t.handlerStub.replace(/\/\/ Chrome 149:.*\nconst ctx.*;\n\n/m, ""))
+        .map((t) => t.handlerStub.replace(CTX_BLOCK + "\n\n", ""))
         .join("\n\n// " + "─".repeat(70) + "\n\n");
-      writeFileSync(handlersPath, ctxLine + "\n" + stubs, "utf-8");
+      writeFileSync(handlersPath, CTX_BLOCK + "\n\n" + stubs, "utf-8");
       writtenFiles.push(handlersPath);
     } else {
       // Per-tool output
@@ -91,10 +90,12 @@ export function generate(options: GenerateOptions): GenerateOutput {
 
 function writeToolFiles(tool: GeneratedTool, outDir: string): string[] {
   const files: string[] = [];
-  const safeName = tool.definition.name;
+  const safeName = tool.definition.name.replace(/[^a-zA-Z0-9_-]/g, "_");
 
-  // Write JSON definition
   const defPath = join(outDir, `${safeName}.webmcp.json`);
+  if (!resolve(defPath).startsWith(resolve(outDir))) {
+    throw new Error(`Refusing to write outside output directory: ${safeName}`);
+  }
   writeFileSync(
     defPath,
     JSON.stringify(tool.definition, null, 2),

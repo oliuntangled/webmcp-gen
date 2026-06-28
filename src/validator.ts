@@ -98,7 +98,7 @@ export function validateToolDefinition(
         severity: "error",
       });
     } else {
-      const allowed = new Set(["readOnlyHint"]);
+      const allowed = new Set(["readOnlyHint", "untrustedContentHint"]);
       for (const key of Object.keys(tool.annotations)) {
         if (!allowed.has(key)) {
           issues.push({
@@ -108,15 +108,15 @@ export function validateToolDefinition(
           });
         }
       }
-      if (
-        tool.annotations.readOnlyHint !== undefined &&
-        typeof tool.annotations.readOnlyHint !== "boolean"
-      ) {
-        issues.push({
-          path: "annotations.readOnlyHint",
-          message: "readOnlyHint must be a boolean.",
-          severity: "error",
-        });
+      for (const hint of ["readOnlyHint", "untrustedContentHint"] as const) {
+        const val = (tool.annotations as Record<string, unknown>)[hint];
+        if (val !== undefined && typeof val !== "boolean") {
+          issues.push({
+            path: `annotations.${hint}`,
+            message: `${hint} must be a boolean.`,
+            severity: "error",
+          });
+        }
       }
     }
   }
