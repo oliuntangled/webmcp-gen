@@ -1,5 +1,7 @@
 # webmcp-gen
 
+![webmcp-gen demo](demo.gif)
+
 CLI tool that generates [WebMCP](https://developer.chrome.com/docs/ai/webmcp) tool definitions from TypeScript interfaces.
 
 WebMCP is the browser-native API (`navigator.modelContext`) that lets web pages expose structured tools to AI agents. It shipped as a Chrome 149 origin trial in June 2026. This tool reads your TypeScript interfaces and produces spec-compliant JSON tool definitions plus ready-to-use handler stubs.
