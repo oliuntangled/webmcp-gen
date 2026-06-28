@@ -70,10 +70,12 @@ export function generate(options: GenerateOptions): GenerateOutput {
       writeFileSync(defPath, JSON.stringify(allDefinitions, null, 2), "utf-8");
       writtenFiles.push(defPath);
 
-      const allHandlers = generation.tools
-        .map((t) => t.handlerStub)
+      const ctxLine = '// Chrome 149: navigator.modelContext — Chrome 150+: document.modelContext\n'
+        + 'const ctx = "modelContext" in document ? document.modelContext : navigator.modelContext;\n';
+      const stubs = generation.tools
+        .map((t) => t.handlerStub.replace(/\/\/ Chrome 149:.*\nconst ctx.*;\n\n/m, ""))
         .join("\n\n// " + "─".repeat(70) + "\n\n");
-      writeFileSync(handlersPath, allHandlers, "utf-8");
+      writeFileSync(handlersPath, ctxLine + "\n" + stubs, "utf-8");
       writtenFiles.push(handlersPath);
     } else {
       // Per-tool output
